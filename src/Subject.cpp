@@ -1,0 +1,136 @@
+#include "Subject.h"
+#include <cctype>
+#include <iostream>
+#include <stdexcept>
+
+Subject::Subject(const std::string& filename) : filename_(filename) {
+    std::ifstream file(filename_);
+    if (!file.is_open()) {
+        throw std::runtime_error("Не удалось открыть файл: " + filename_);
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        text_ += line + "\n";
+    }
+
+    if (!text_.empty() && text_.back() == '\n') {
+        text_.pop_back();
+    }
+
+    file.close();
+}
+
+std::string Subject::getText() {
+    return text_;
+}
+
+void Subject::setText(const std::string& text) {
+    text_ = text;
+}
+
+std::string Subject::getFilename() {
+    return filename_;
+}
+
+void Subject::replaceWord(const std::string& target, const std::string& replacement) {
+    if (target.empty()) return;
+
+    size_t pos = 0;
+    while ((pos = text_.find(target, pos)) != std::string::npos) {
+        text_.replace(pos, target.length(), replacement);
+        pos += replacement.length();
+    }
+
+    saveToFile();
+}
+
+bool Subject::findPhrase(const std::string& phrase) {
+    if (phrase.empty()) return false;
+    return text_.find(phrase) != std::string::npos;
+}
+
+void Subject::capitalizeWords() {
+    bool isNewWord = true;
+    for (char& c : text_) {
+        if (std::isalpha(static_cast<unsigned char>(c))) {
+            if (isNewWord) {
+                c = std::toupper(static_cast<unsigned char>(c));
+                isNewWord = false;
+            }
+        }
+        else if (std::isspace(static_cast<unsigned char>(c)) || std::ispunct(static_cast<unsigned char>(c))) {
+            isNewWord = true;
+        }
+    }
+
+    saveToFile();
+}
+
+void Subject::capitalizeSentences() {
+    bool isNewSentence = true;
+    for (char& c : text_) {
+        if (std::isalpha(static_cast<unsigned char>(c))) {
+            if (isNewSentence) {
+                c = std::toupper(static_cast<unsigned char>(c));
+                isNewSentence = false;
+            }
+        }
+        else if (c == '.' || c == '!' || c == '?') {
+            isNewSentence = true;
+        }
+    }
+    saveToFile();
+}
+
+std::string Subject::getNumberedSentences() {
+    std::string result;
+    std::string currentSentence;
+    int count = 1;
+
+    for (size_t i = 0; i < text_.length(); ++i) {
+        currentSentence += text_[i];
+
+        if (text_[i] == '.' || text_[i] == '!' || text_[i] == '?') {
+            size_t first = currentSentence.find_first_not_of(" \t\n\r");
+            if (first != std::string::npos) {
+                std::string trimmed = currentSentence.substr(first);
+                result += std::to_string(count++) + ". " + trimmed + "\n";
+            }
+            currentSentence.clear();
+        }
+    }
+
+    size_t first = currentSentence.find_first_not_of(" \t\n\r");
+    if (first != std::string::npos) {
+        result += std::to_string(count) + ". " + currentSentence.substr(first) + "\n";
+    }
+
+    if (!result.empty() && result.back() == '\n') {
+        result.pop_back();
+    }
+
+    return result;
+}
+
+bool Subject::saveToFile() {
+    std::ofstream file(filename_);
+    if (!file.is_open()) {
+        std::cerr << "Ошибка: Не удалось открыть файл для записи: " << filename_ << std::endl;
+        return false;
+    }
+    file << text_;
+    file.close();
+    return true;
+}
+
+bool Subject::saveTextToFile(const std::string& text, const std::string& outputFilename) {
+    std::ofstream file(outputFilename);
+    if (!file.is_open()) {
+        std::cerr << "Ошибка: Не удалось открыть файл для записи: " << outputFilename << std::endl;
+        return false;
+    }
+    file << text;
+    file.close();
+    return true;
+}
