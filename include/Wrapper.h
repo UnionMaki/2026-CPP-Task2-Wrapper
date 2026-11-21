@@ -7,6 +7,7 @@
 #include <string>
 #include <tuple>
 #include <stdexcept>
+#include <type_traits>
 
 class IWrapper {
 public:
@@ -30,6 +31,9 @@ public:
         if constexpr (std::is_void_v<T>) {
             call_template(std::move(_inArgs));
             return "";
+        }
+        else if constexpr (std::is_same_v<std::decay_t<T>, std::string>) {
+            return call_template(std::move(_inArgs));
         }
         else {
             return std::to_string(call_template(std::move(_inArgs)));
