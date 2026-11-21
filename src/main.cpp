@@ -10,9 +10,9 @@ int main(){
 
     subject->capitalizeWords();
 
-    Wrapper wrapper(subject, &Subject::replaceWord, { {"Arg1", "First"}, {"Arg2", "SSSSSSSSSS"} });
+    Wrapper wrapper(subject, &Subject::capitalizeWords, { {"Arg1", "First"}, {"Arg2", "SSSSSSSSSS"} });
 
-    wrapper.call("First", "SSSSSSSSSS");
+    wrapper.call({ {"Arg1", "1"}, {"Arg2", "2"} });
 
     return 0; 
 }
