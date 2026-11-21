@@ -17,7 +17,7 @@ public:
 template<typename T, typename ...Param>
 class Wrapper : public IWrapper {
 public:
-    Wrapper(std::unique_ptr<Subject> _subjRaw, T(Subject::* _func)(Param...), std::initializer_list<std::pair<const std::string, std::string>>&& _defArgs) : subjPtr(std::move(_subjRaw)), funcPtr(_func) {
+    Wrapper(std::unique_ptr<Subject> _subjPtr, T(Subject::* _func)(Param...), std::initializer_list<std::pair<const std::string, std::string>>&& _defArgs) : subjPtr(std::move(_subjPtr)), funcPtr(_func) {
         for (auto item : _defArgs) {
             defArgs.push_back(std::move(item.second));
         }
@@ -28,11 +28,11 @@ public:
 
     std::string call(std::initializer_list<std::pair<const std::string, std::string>>&& _inArgs) override {
         if constexpr (std::is_void_v<T>) {
-            call_impl_wrapper(std::move(_inArgs));
+            call_template(std::move(_inArgs));
             return "";
         }
         else {
-            return std::to_string(call_impl_wrapper(std::move(_inArgs)));
+            return std::to_string(call_template(std::move(_inArgs)));
         }
     }
 
@@ -41,14 +41,14 @@ private:
     T(Subject::* funcPtr)(Param...) = nullptr;
     std::vector<std::string> defArgs = {};
 
-    T call_impl_wrapper(std::initializer_list<std::pair<const std::string, std::string>>&& _inArgs) {
+    T call_template(std::initializer_list<std::pair<const std::string, std::string>>&& _inArgs) {
         std::vector<std::string> callArgs;
         int i = 0;
         for (auto item : _inArgs) {
             callArgs.push_back(std::move(item.second));
             i++;
         }
-        i++;
+        //i++;
         for (;i < sizeof...(Param); i++) {
             callArgs.push_back(defArgs[i]);
         }
