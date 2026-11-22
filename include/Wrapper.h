@@ -51,7 +51,7 @@ private:
 
     T call_template(std::initializer_list<std::pair<const std::string, std::string>>&& _inArgs) {
         std::vector<std::string> callArgs;
-        int i = 0;
+        std::size_t i = 0;
         for (auto item : _inArgs) {
             callArgs.push_back(std::move(item.second));
             i++;
