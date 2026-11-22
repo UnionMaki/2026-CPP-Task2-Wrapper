@@ -3,10 +3,10 @@
 #include <iostream>
 #include <stdexcept>
 
-Subject::Subject(const std::string& filename) : filename_(filename) {
+Subject::Subject(std::string filename) : filename_(std::move(filename)) {
     std::ifstream file(filename_);
     if (!file.is_open()) {
-        throw std::runtime_error("Не удалось открыть файл: " + filename_);
+        throw std::runtime_error("Can't open file: " + filename_);
     }
 
     std::string line;
@@ -22,7 +22,7 @@ Subject::Subject(const std::string& filename) : filename_(filename) {
 }
 
 void Subject::replaceWord(const std::string& target, const std::string& replacement) {
-    if (target.empty()) return;
+    if (target.empty()) { return; }
 
     size_t pos = 0;
     while ((pos = text_.find(target, pos)) != std::string::npos) {
@@ -34,20 +34,20 @@ void Subject::replaceWord(const std::string& target, const std::string& replacem
 }
 
 bool Subject::findPhrase(const std::string& phrase) {
-    if (phrase.empty()) return false;
+    if (phrase.empty()) { return false; }
     return text_.find(phrase) != std::string::npos;
 }
 
 void Subject::capitalizeWords() {
     bool isNewWord = true;
-    for (char& c : text_) {
-        if (std::isalpha(static_cast<unsigned char>(c))) {
+    for (char& chr : text_) {
+        if (std::isalpha(static_cast<unsigned char>(chr)) != 0) {
             if (isNewWord) {
-                c = std::toupper(static_cast<unsigned char>(c));
+                chr = static_cast<char>(std::toupper(static_cast<unsigned char>(chr)));
                 isNewWord = false;
             }
         }
-        else if (std::isspace(static_cast<unsigned char>(c)) || std::ispunct(static_cast<unsigned char>(c))) {
+        else if (std::isspace(static_cast<unsigned char>(chr)) != 0 || std::ispunct(static_cast<unsigned char>(chr)) != 0 ) {
             isNewWord = true;
         }
     }
@@ -57,14 +57,14 @@ void Subject::capitalizeWords() {
 
 void Subject::capitalizeSentences() {
     bool isNewSentence = true;
-    for (char& c : text_) {
-        if (std::isalpha(static_cast<unsigned char>(c))) {
+    for (char& chr : text_) {
+        if (std::isalpha(static_cast<unsigned char>(chr)) != 0) {
             if (isNewSentence) {
-                c = std::toupper(static_cast<unsigned char>(c));
+                chr = static_cast<char>(std::toupper(static_cast<unsigned char>(chr)));
                 isNewSentence = false;
             }
         }
-        else if (c == '.' || c == '!' || c == '?') {
+        else if (chr == '.' || chr == '!' || chr == '?') {
             isNewSentence = true;
         }
     }
@@ -104,7 +104,7 @@ std::string Subject::getNumberedSentences() {
 bool Subject::saveToFile() {
     std::ofstream file(filename_);
     if (!file.is_open()) {
-        std::cerr << "Ошибка: Не удалось открыть файл для записи: " << filename_ << std::endl;
+        std::cerr << "Error: can't open file" << filename_ << "\n";
         return false;
     }
     file << text_;

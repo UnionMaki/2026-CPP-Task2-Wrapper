@@ -10,7 +10,7 @@ private:
     std::string filename_;
 
 public:
-    explicit Subject(const std::string& filename);
+    explicit Subject(std::string filename);
 
     void replaceWord(const std::string& target, const std::string& replacement);
     bool findPhrase(const std::string& phrase);
