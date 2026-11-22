@@ -21,18 +21,6 @@ Subject::Subject(const std::string& filename) : filename_(filename) {
     file.close();
 }
 
-std::string Subject::getText() {
-    return text_;
-}
-
-void Subject::setText(const std::string& text) {
-    text_ = text;
-}
-
-std::string Subject::getFilename() {
-    return filename_;
-}
-
 void Subject::replaceWord(const std::string& target, const std::string& replacement) {
     if (target.empty()) return;
 
@@ -120,17 +108,6 @@ bool Subject::saveToFile() {
         return false;
     }
     file << text_;
-    file.close();
-    return true;
-}
-
-bool Subject::saveTextToFile(const std::string& text, const std::string& outputFilename) {
-    std::ofstream file(outputFilename);
-    if (!file.is_open()) {
-        std::cerr << "Ошибка: Не удалось открыть файл для записи: " << outputFilename << std::endl;
-        return false;
-    }
-    file << text;
     file.close();
     return true;
 }

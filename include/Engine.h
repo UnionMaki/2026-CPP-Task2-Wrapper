@@ -26,6 +26,7 @@ public:
 				throw std::runtime_error("wrapper doesn't exist");
 			}
 		}
+		return "";
 	}
 private:
 	std::map<std::string, IWrapper*> command_map = {};

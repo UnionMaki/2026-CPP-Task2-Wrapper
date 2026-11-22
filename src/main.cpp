@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <fstream>
+#include <exception>
 #include "Wrapper.h"
 #include "Subject.h"
 #include "Engine.h"
@@ -26,7 +27,13 @@ int main() {
     Wrapper wrapper1(std::make_unique<Subject>("replace_test.txt"), &Subject::replaceWord, { {"target", "fox"}, {"replacement", "cat"} });
     Engine engine1;
     engine1.register_command(&wrapper1, "replace");
-    engine1.execute("replace", { {"target", "fox"}, {"replacement", "cat"} });
+
+    try {
+        engine1.execute("replace", { {"target", "fox"}, {"replacement", "cat"} });
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error executing command 'replace': " << e.what() << "\n";
+    }
 
     std::cout << "Command: replace(target='fox', replacement='cat')\n";
     std::cout << "Result in file replace_test.txt:\n";
@@ -55,11 +62,23 @@ int main() {
     Engine engine2;
     engine2.register_command(&wrapper2, "find");
 
-    std::string result1 = engine2.execute("find", { {"phrase", "test document"} });
+    std::string result1 = "";
+    try {
+        result1 = engine2.execute("find", { {"phrase", "test document"} });
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error executing command 'find': " << e.what() << "\n";
+    }
     std::cout << "Command: find(phrase='test document')\n";
     std::cout << "Result: " << (result1 == "1" ? "Found (true)" : "Not found (false)") << "\n\n";
 
-    std::string result2 = engine2.execute("find", { {"phrase", "not found phrase"} });
+    std::string result2 = "";
+    try {
+        result2 = engine2.execute("find", { {"phrase", "not found phrase"} });
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error executing command 'find': " << e.what() << "\n";
+    }
     std::cout << "Command: find(phrase='not found phrase')\n";
     std::cout << "Result: " << (result2 == "1" ? "Found (true)" : "Not found (false)") << "\n\n";
 
@@ -82,7 +101,13 @@ int main() {
     Wrapper wrapper3(std::make_unique<Subject>("capitalize_words_test.txt"), &Subject::capitalizeWords, {});
     Engine engine3;
     engine3.register_command(&wrapper3, "capitalize_words");
-    engine3.execute("capitalize_words", {});
+
+    try {
+        engine3.execute("capitalize_words", {});
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error executing command 'capitalize_words': " << e.what() << "\n";
+    }
 
     std::cout << "Command: capitalize_words()\n";
     std::cout << "Result in file capitalize_words_test.txt:\n";
@@ -108,7 +133,13 @@ int main() {
     Wrapper wrapper4(std::make_unique<Subject>("capitalize_sentences_test.txt"), &Subject::capitalizeSentences, {});
     Engine engine4;
     engine4.register_command(&wrapper4, "capitalize_sentences");
-    engine4.execute("capitalize_sentences", {});
+
+    try {
+        engine4.execute("capitalize_sentences", {});
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error executing command 'capitalize_sentences': " << e.what() << "\n";
+    }
 
     std::cout << "Command: capitalize_sentences()\n";
     std::cout << "Result in file capitalize_sentences_test.txt:\n";
@@ -135,10 +166,17 @@ int main() {
     Engine engine5;
     engine5.register_command(&wrapper5, "number");
 
-    std::string result = engine5.execute("number", {});
+    std::string result = "";
+    try {
+        result = engine5.execute("number", {});
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error executing command 'number': " << e.what() << "\n";
+    }
 
     std::cout << "Command: getNumberedSentences()\n";
     std::cout << "Result (returned as string):\n";
     std::cout << result << "\n";
+
     return 0;
 }

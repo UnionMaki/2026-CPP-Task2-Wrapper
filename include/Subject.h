@@ -10,11 +10,7 @@ private:
     std::string filename_;
 
 public:
-    Subject(const std::string& filename);
-
-    std::string getText();
-    void setText(const std::string& text);
-    std::string getFilename();
+    explicit Subject(const std::string& filename);
 
     void replaceWord(const std::string& target, const std::string& replacement);
     bool findPhrase(const std::string& phrase);
@@ -23,7 +19,6 @@ public:
     std::string getNumberedSentences();
 
     bool saveToFile();
-    bool saveTextToFile(const std::string& text, const std::string& outputFilename);
 };
 
 #endif

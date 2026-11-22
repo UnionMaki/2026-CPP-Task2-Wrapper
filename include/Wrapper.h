@@ -7,6 +7,8 @@
 #include <string>
 #include <tuple>
 #include <stdexcept>
+#include <algorithm> 
+#include <iterator>
 #include <type_traits>
 
 class IWrapper {
@@ -19,9 +21,11 @@ template<typename T, typename ...Param>
 class Wrapper : public IWrapper {
 public:
     Wrapper(std::unique_ptr<Subject> _subjPtr, T(Subject::* _func)(Param...), std::initializer_list<std::pair<const std::string, std::string>>&& _defArgs) : subjPtr(std::move(_subjPtr)), funcPtr(_func) {
-        for (auto item : _defArgs) {
-            defArgs.push_back(std::move(item.second));
-        }
+        std::transform(
+            _defArgs.begin(), _defArgs.end(),
+            std::back_inserter(defArgs),
+            [](const auto& item) { return item.second; }
+        );
 
         if (defArgs.size() < sizeof...(Param))
             throw std::domain_error("Expected at least" + std::to_string(sizeof...(Param)) + "arguments");
